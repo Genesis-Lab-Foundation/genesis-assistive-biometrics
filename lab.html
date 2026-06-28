@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Assistive Biometrics Lab</title>
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body class="lab-page">
+    <main class="lab-shell">
+      <header class="lab-head">
+        <div>
+          <h1>Assistive Biometrics Lab</h1>
+          <p>
+            Local-first test queue for the camera collector: richer emotions, AAC-style wants,
+            hands/body/audio, and AR mask experiments. No raw biometric storage by default.
+          </p>
+        </div>
+        <a class="panel-link" href="./index.html">Camera</a>
+      </header>
+
+      <section class="lab-section" aria-label="AAC vocabulary">
+        <h2>AAC + child UI vocabulary</h2>
+        <p>
+          The prototype now separates pure emotion hints from practical communication cards.
+          Wants include daily needs plus core words that are useful across many situations.
+        </p>
+        <div class="lab-grid">
+          <article class="lab-card">
+            <h2>Pure emotions</h2>
+            <p>Happy, calm, sad, angry, scared, surprised, confused, tired, hurt, overloaded, bored, sound.</p>
+            <div class="lab-tags">
+              <span>🙂 happy</span><span>😌 calm</span><span>😢 sad</span><span>😠 angry</span>
+              <span>😨 scared</span><span>😳 wow</span><span>🤔 huh</span><span>🥱 tired</span>
+              <span>🤕 ouch</span><span>🫨 too much</span><span>😐 bored</span><span>🗣️ sound</span>
+            </div>
+          </article>
+          <article class="lab-card">
+            <h2>Wants + core words</h2>
+            <p>Drink, eat, toilet, outside, play, sleep, help, break, quiet, hug, more, stop, yes, no, music.</p>
+            <div class="lab-tags">
+              <span>🥤 drink</span><span>🍽️ eat</span><span>🚽 toilet</span><span>🌳 outside</span>
+              <span>🧸 play</span><span>😴 sleep</span><span>🆘 help</span><span>🛑 break</span>
+              <span>🤫 quiet</span><span>🤗 hug</span><span>➕ more</span><span>✋ stop</span>
+              <span>✅ yes</span><span>❌ no</span><span>🎵 music</span>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="lab-section" aria-label="Open-source candidates">
+        <h2>Open-source / free candidates to test</h2>
+        <div class="lab-grid">
+          <article class="lab-card">
+            <h2>MediaPipe Face Landmarker</h2>
+            <p>Current base layer for face mesh, blendshapes, head pose, eye openness, and mouth movement.</p>
+            <a href="https://ai.google.dev/edge/mediapipe/solutions/vision/face_landmarker/web_js">Official web docs</a>
+          </article>
+          <article class="lab-card">
+            <h2>MediaPipe Hands + Pose</h2>
+            <p>Current base layer for fingertips, pinch/open hand, body keypoints, leaving-frame, and restlessness.</p>
+            <a href="https://ai.google.dev/edge/mediapipe/solutions/vision/hand_landmarker/web_js">Hand docs</a>
+          </article>
+          <article class="lab-card">
+            <h2>TensorFlow.js face landmarks</h2>
+            <p>Alternative browser model to compare face stability, long-distance detection, and runtime cost.</p>
+            <a href="https://github.com/tensorflow/tfjs-models/tree/master/face-landmarks-detection">GitHub</a>
+          </article>
+          <article class="lab-card">
+            <h2>Jeeliz FaceFilter</h2>
+            <p>AR-mask candidate for face-attached effects if the current canvas mask needs stronger tracking.</p>
+            <a href="https://github.com/jeeliz/jeelizFaceFilter">GitHub</a>
+          </article>
+          <article class="lab-card">
+            <h2>MindAR face tracking</h2>
+            <p>Another browser AR candidate for face filters and anchored overlays.</p>
+            <a href="https://github.com/hiukim/mind-ar-js">GitHub</a>
+          </article>
+          <article class="lab-card">
+            <h2>AAC references</h2>
+            <p>Vocabulary direction: wants, feelings, routine needs, and reusable core words for communication.</p>
+            <a href="https://www.asha.org/public/speech/disorders/aac/">ASHA AAC overview</a>
+          </article>
+          <article class="lab-card">
+            <h2>Wearables</h2>
+            <p>Future optional layer: Apple Watch or smart band heart rate, HRV, movement, activity, and rest context.</p>
+            <a href="https://developer.apple.com/health-fitness/">Apple health and fitness docs</a>
+          </article>
+        </div>
+      </section>
+
+      <section class="lab-section" aria-label="Next tests">
+        <h2>Next test queue</h2>
+        <div class="lab-grid">
+          <article class="lab-card">
+            <h2>Mouth + tongue</h2>
+            <p>Test mouth crop classifier or segmentation; current tongue value is only a mouth-open heuristic.</p>
+          </article>
+          <article class="lab-card">
+            <h2>Gesture layer</h2>
+            <p>Detect hand-to-mouth, pointing, self-touch, stop gesture, reach, wave, and repeated movement bursts.</p>
+          </article>
+          <article class="lab-card">
+            <h2>Expression classifier</h2>
+            <p>Train per-child classifier on blendshapes, pose, hands, audio, time context, and caregiver labels.</p>
+          </article>
+          <article class="lab-card">
+            <h2>Audio layer</h2>
+            <p>Classify nonverbal vocalization intensity, pitch contour, repeated hums, and distress bursts.</p>
+          </article>
+          <article class="lab-card">
+            <h2>Wearable physiology</h2>
+            <p>Add consented Apple Watch / smart band signals as context, not diagnosis: heart rate, HRV, motion, sleep/rest.</p>
+          </article>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

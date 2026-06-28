@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Genesis Assistive Biometrics</title>
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <main class="app">
+      <section class="viewer" aria-label="Camera stream">
+        <video id="video" autoplay muted playsinline></video>
+        <canvas id="canvas"></canvas>
+        <div id="childOverlay" class="child-overlay" hidden aria-label="Child mode">
+          <div class="child-strip-stack">
+            <div id="childEmotionCards" class="child-strip child-emotion-cards" aria-label="Pure emotions"></div>
+            <div id="childNeedCards" class="child-strip child-need-cards" aria-label="Wants"></div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="panel" aria-label="Controls and telemetry">
+        <div class="panel-head">
+          <h1>Genesis Assistive Biometrics</h1>
+          <a class="panel-link" href="./lab.html">Lab</a>
+        </div>
+
+        <details class="section-toggle control-toggle" data-persist-open="control">
+          <summary>
+            <span>Control</span>
+            <span class="summary-value" id="controlSummary">ready</span>
+          </summary>
+          <div class="section-body control-body">
+            <div class="runtime-status">
+              <div id="status" class="status">Idle</div>
+              <div id="faceLoadBadge" class="loader" hidden>
+                <span class="spinner" aria-hidden="true"></span>
+                <span id="faceLoadText">Loading face telemetry</span>
+              </div>
+              <div id="handLoadBadge" class="loader" hidden>
+                <span class="spinner" aria-hidden="true"></span>
+                <span id="handLoadText">Loading hand telemetry</span>
+              </div>
+              <div id="bodyLoadBadge" class="loader" hidden>
+                <span class="spinner" aria-hidden="true"></span>
+                <span id="bodyLoadText">Loading body telemetry</span>
+              </div>
+              <div id="audioLoadBadge" class="loader" hidden>
+                <span class="spinner" aria-hidden="true"></span>
+                <span id="audioLoadText">Loading audio telemetry</span>
+              </div>
+            </div>
+
+            <div class="primary-actions">
+              <button id="startButton" type="button">Start</button>
+              <button id="stopButton" type="button">Stop</button>
+              <button id="snapshotButton" type="button">Snapshot</button>
+              <button id="recordButton" type="button">Record</button>
+              <button id="scanButton" type="button">One-time scan</button>
+            </div>
+
+            <div class="toggles quick-toggles">
+              <label><input id="mirrorToggle" type="checkbox" checked> Mirror</label>
+              <label><input id="overlayToggle" type="checkbox" checked> Overlay</label>
+              <label><input id="metricsToggle" type="checkbox" checked> Face telemetry</label>
+              <label><input id="denseFaceToggle" type="checkbox" checked> Dense face</label>
+              <label><input id="eyeScanToggle" type="checkbox" checked> Eye scan</label>
+              <label><input id="handTelemetryToggle" type="checkbox" checked> Hand telemetry</label>
+              <label><input id="bodyTelemetryToggle" type="checkbox" checked> Body telemetry</label>
+              <label><input id="audioTelemetryToggle" type="checkbox" checked> Audio telemetry</label>
+              <label><input id="fingerprintToggle" type="checkbox" checked> Fingerprint check</label>
+              <label><input id="autoStartToggle" type="checkbox" checked> Auto start</label>
+              <label><input id="childModeToggle" type="checkbox"> Child mode</label>
+            </div>
+          </div>
+        </details>
+
+        <details class="section-toggle controls-section" data-persist-open="cameraSettings">
+          <summary>
+            <span>Camera settings</span>
+            <span class="summary-value" id="settingsSummary">1280 x 720 / 30 fps</span>
+          </summary>
+          <div class="controls section-body">
+            <label>
+              Camera
+              <select id="deviceSelect"></select>
+            </label>
+
+            <div class="grid two">
+              <label>
+                Width
+                <input id="widthInput" type="number" min="160" max="7680" step="1" value="1280">
+              </label>
+              <label>
+                Height
+                <input id="heightInput" type="number" min="120" max="4320" step="1" value="720">
+              </label>
+            </div>
+
+            <div class="grid two">
+              <label>
+                Camera FPS
+                <input id="fpsInput" type="number" min="1" max="240" step="1" value="30">
+              </label>
+              <label>
+                Render FPS
+                <input id="renderFpsInput" type="number" min="1" max="240" step="1" value="30">
+              </label>
+            </div>
+
+            <div class="grid three">
+              <label>
+                Rotation
+                <select id="rotationSelect">
+                  <option value="0">0 deg</option>
+                  <option value="90">90 deg</option>
+                  <option value="180">180 deg</option>
+                  <option value="270">270 deg</option>
+                </select>
+              </label>
+              <label>
+                Aspect ratio
+                <select id="aspectSelect">
+                  <option value="viewport">Viewport</option>
+                  <option value="source">Source</option>
+                  <option value="16:9">16:9</option>
+                  <option value="9:16">9:16</option>
+                  <option value="4:3">4:3</option>
+                  <option value="1:1">1:1</option>
+                </select>
+              </label>
+              <label>
+                Fit
+                <select id="fitSelect">
+                  <option value="cover">Cover</option>
+                  <option value="contain">Contain</option>
+                  <option value="stretch">Stretch</option>
+                </select>
+              </label>
+            </div>
+
+            <div id="dynamicControls" class="dynamic-controls"></div>
+          </div>
+        </details>
+
+        <details class="section-toggle readout-toggle" data-persist-open="session">
+          <summary>
+            <span>Session</span>
+            <span class="summary-value" id="sessionSummary">0 samples / 0 labels</span>
+          </summary>
+          <section class="readout section-body">
+            <div class="session-controls">
+              <label>
+                Buffer seconds
+                <input id="bufferSecondsInput" type="number" min="10" max="120" step="5" value="45">
+              </label>
+              <div class="primary-actions">
+                <button id="exportLabelsButton" type="button">Export labels</button>
+                <button id="clearLabelsButton" type="button">Clear labels</button>
+              </div>
+            </div>
+
+            <div class="label-groups" aria-label="Training labels">
+              <div class="label-group">
+                <h2>Needs</h2>
+                <div class="label-buttons">
+                  <button type="button" data-label-kind="need" data-label="drink">Drink</button>
+                  <button type="button" data-label-kind="need" data-label="eat">Eat</button>
+                  <button type="button" data-label-kind="need" data-label="toilet">Toilet</button>
+                  <button type="button" data-label-kind="need" data-label="outside">Outside</button>
+                  <button type="button" data-label-kind="need" data-label="play">Play</button>
+                  <button type="button" data-label-kind="need" data-label="sleep">Sleep</button>
+                  <button type="button" data-label-kind="need" data-label="help">Help</button>
+                  <button type="button" data-label-kind="need" data-label="break">Break</button>
+                  <button type="button" data-label-kind="need" data-label="quiet">Quiet</button>
+                  <button type="button" data-label-kind="need" data-label="hug">Hug</button>
+                  <button type="button" data-label-kind="need" data-label="more">More</button>
+                  <button type="button" data-label-kind="need" data-label="stop">Stop</button>
+                  <button type="button" data-label-kind="need" data-label="yes">Yes</button>
+                  <button type="button" data-label-kind="need" data-label="no">No</button>
+                  <button type="button" data-label-kind="need" data-label="music">Music</button>
+                </div>
+              </div>
+
+              <div class="label-group">
+                <h2>Affect</h2>
+                <div class="label-buttons">
+                  <button type="button" data-label-kind="affect" data-label="positive">Happy</button>
+                  <button type="button" data-label-kind="affect" data-label="neutral">Calm</button>
+                  <button type="button" data-label-kind="affect" data-label="sad">Sad</button>
+                  <button type="button" data-label-kind="affect" data-label="angry">Angry</button>
+                  <button type="button" data-label-kind="affect" data-label="scared">Scared</button>
+                  <button type="button" data-label-kind="affect" data-label="surprised">Wow</button>
+                  <button type="button" data-label-kind="affect" data-label="confused">Huh</button>
+                  <button type="button" data-label-kind="affect" data-label="tired">Tired</button>
+                  <button type="button" data-label-kind="affect" data-label="hurt">Ouch</button>
+                  <button type="button" data-label-kind="affect" data-label="overloaded">Too much</button>
+                  <button type="button" data-label-kind="affect" data-label="bored">Bored</button>
+                  <button type="button" data-label-kind="affect" data-label="vocalizing">Sound</button>
+                </div>
+              </div>
+            </div>
+
+            <dl id="sessionReadout"></dl>
+          </section>
+        </details>
+
+        <details class="section-toggle readout-toggle" data-persist-open="review">
+          <summary>
+            <span>Review</span>
+            <span class="summary-value" id="reviewSummary">waiting</span>
+          </summary>
+          <section class="readout section-body">
+            <div id="reviewCards" class="review-cards"></div>
+          </section>
+        </details>
+
+        <details class="section-toggle readout-toggle" data-persist-open="stream">
+          <summary>
+            <span>Stream</span>
+            <span class="summary-value" id="streamSummary">stopped</span>
+          </summary>
+          <section class="readout section-body">
+            <dl id="streamReadout"></dl>
+          </section>
+        </details>
+
+        <details class="section-toggle readout-toggle" data-persist-open="faceTelemetry">
+          <summary>
+            <span>GraphQL response</span>
+            <span class="summary-value" id="faceSummary">not loaded</span>
+          </summary>
+          <section class="readout section-body">
+            <pre id="faceReadout">{}</pre>
+          </section>
+        </details>
+
+        <details class="section-toggle readout-toggle" data-persist-open="query">
+          <summary>
+            <span>Query</span>
+            <span class="summary-value" id="querySummary">CameraControlSnapshot</span>
+          </summary>
+          <section class="readout section-body">
+            <pre id="queryReadout"></pre>
+          </section>
+        </details>
+
+        <details class="section-toggle readout-toggle" data-persist-open="schema">
+          <summary>
+            <span>Schema</span>
+            <span class="summary-value" id="schemaSummary">self described</span>
+          </summary>
+          <section class="readout section-body">
+            <pre id="schemaReadout"></pre>
+          </section>
+        </details>
+
+        <details class="section-toggle readout-toggle" data-persist-open="capabilities">
+          <summary>
+            <span>Capabilities</span>
+            <span class="summary-value" id="capabilitiesSummary">hidden</span>
+          </summary>
+          <section class="readout section-body">
+            <pre id="capabilitiesReadout">{}</pre>
+          </section>
+        </details>
+      </aside>
+    </main>
+
+    <script type="module" src="./app.js?v=20260628-child-emoji-strips"></script>
+  </body>
+</html>

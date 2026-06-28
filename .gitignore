@@ -1,0 +1,9 @@
+node_modules/
+.DS_Store
+*.log
+*.webm
+camera-frame-*.png
+camera-recording-*.webm
+labels-*.jsonl
+*.local
+.env

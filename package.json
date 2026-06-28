@@ -1,0 +1,21 @@
+{
+  "name": "genesis-assistive-biometrics",
+  "version": "0.1.0",
+  "private": false,
+  "type": "module",
+  "description": "Local-first assistive biometrics research prototype by Genesis Lab Foundation.",
+  "scripts": {
+    "start": "node server.js",
+    "start:1337": "HOST=127.0.0.1 PORT=1337 node server.js",
+    "check": "node --check app.js && node --check server.js && node --check src/config.js && node --check src/graphql-contract.js && node --check src/interpretation.js && node --check src/math.js && node --check src/vocabulary.js"
+  },
+  "keywords": [
+    "assistive-technology",
+    "aac",
+    "biometrics",
+    "autism",
+    "mediapipe",
+    "local-first"
+  ],
+  "license": "Apache-2.0"
+}
