@@ -40,7 +40,7 @@ Planned multimodal layer:
 npm start
 ```
 
-Default URL:
+Default URL. The root route opens the research lab page; use `Launch` there to open the camera app:
 
 ```text
 http://127.0.0.1:5174

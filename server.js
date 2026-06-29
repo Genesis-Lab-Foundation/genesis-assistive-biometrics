@@ -42,7 +42,7 @@ server.listen(port, host, () => {
 
 function safeFilePath(pathname) {
   const relative = normalize(pathname).replace(/^([/\\])+/, '');
-  const filePath = resolve(root, relative || 'index.html');
+  const filePath = resolve(root, relative || 'lab.html');
   if (filePath !== root && !filePath.startsWith(`${root}${sep}`)) return null;
   return filePath;
 }
