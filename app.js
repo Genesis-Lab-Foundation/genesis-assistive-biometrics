@@ -90,6 +90,7 @@ const els = {
   autoStartToggle: document.querySelector("#autoStartToggle"),
   childModeToggle: document.querySelector("#childModeToggle"),
   bufferSecondsInput: document.querySelector("#bufferSecondsInput"),
+  childSummarySecondsInput: document.querySelector("#childSummarySecondsInput"),
   exportLabelsButton: document.querySelector("#exportLabelsButton"),
   clearLabelsButton: document.querySelector("#clearLabelsButton"),
   dynamicControls: document.querySelector("#dynamicControls"),
@@ -103,6 +104,12 @@ const els = {
 };
 
 const ctx = els.canvas.getContext("2d", { alpha: false });
+const appMode = new URLSearchParams(window.location.search).get("mode") === "child" ? "child" : "dev";
+const CHILD_AFFECT_BY_ALIAS = new Map(
+  CHILD_EMOTIONS.flatMap((emotion) => emotion.aliases.map((alias) => [alias, emotion]))
+);
+const CHILD_AFFECT_BY_KEY = new Map(CHILD_EMOTIONS.map((emotion) => [emotion.key, emotion]));
+const CHILD_SUMMARY_LIMIT = 3;
 const state = {
   stream: null,
   track: null,
@@ -174,6 +181,7 @@ boot();
 async function boot() {
   bindEvents();
   restoreSettings();
+  applyAppMode();
   restoreLabels();
   resizeCanvas();
   window.addEventListener("resize", resizeCanvas);
@@ -187,6 +195,14 @@ async function boot() {
   if (els.autoStartToggle.checked) {
     await startCamera();
   }
+}
+
+function applyAppMode() {
+  document.body.classList.toggle("child-runtime", appMode === "child");
+  if (appMode !== "child") return;
+  els.childModeToggle.checked = true;
+  els.metricsToggle.checked = true;
+  els.autoStartToggle.checked = true;
 }
 
 function bindEvents() {
@@ -214,6 +230,10 @@ function bindEvents() {
   els.bufferSecondsInput.addEventListener("change", () => {
     saveSettings();
     trimFeatureBuffer(performance.now());
+    updateReadouts();
+  });
+  els.childSummarySecondsInput.addEventListener("change", () => {
+    saveSettings();
     updateReadouts();
   });
   els.metricsToggle.addEventListener("change", async () => {
@@ -2058,6 +2078,7 @@ function restoreSettings() {
   setNumberInput(els.fpsInput, saved.fps);
   setNumberInput(els.renderFpsInput, saved.renderFps);
   setNumberInput(els.bufferSecondsInput, saved.bufferSeconds);
+  setNumberInput(els.childSummarySecondsInput, saved.childSummarySeconds);
   setSelectValue(els.rotationSelect, saved.rotation);
   setSelectValue(els.aspectSelect, saved.aspect);
   setSelectValue(els.fitSelect, saved.fit);
@@ -2096,6 +2117,7 @@ function collectSettings() {
     fps: Number(els.fpsInput.value) || 30,
     renderFps: Number(els.renderFpsInput.value) || 30,
     bufferSeconds: bufferWindowSeconds(),
+    childSummarySeconds: childSummaryWindowSeconds(),
     rotation: els.rotationSelect.value,
     aspect: els.aspectSelect.value,
     fit: els.fitSelect.value,
@@ -2259,43 +2281,109 @@ function updateChildMode() {
   els.childOverlay.hidden = !enabled;
   if (!enabled) return;
 
-  const sample = state.featureBuffer[state.featureBuffer.length - 1] || currentFeatureSample(performance.now());
-  renderChildEmotionCards(sample.interpretation.affect.primary);
-  renderChildNeedCards(sample.interpretation.needs);
+  const samples = childSummarySamples();
+  renderChildEmotionCards(samples);
+  renderChildNeedCards(samples);
 }
 
-function renderChildEmotionCards(primaryAffect) {
-  els.childEmotionCards.innerHTML = "";
-  for (const emotion of CHILD_EMOTIONS) {
-    const active = emotion.aliases.includes(primaryAffect);
-    els.childEmotionCards.append(childChip(emotion.emoji, emotion.label, active));
+function childSummarySamples(now = performance.now()) {
+  const cutoff = now - childSummaryWindowMs();
+  const freshSamples = state.featureBuffer.filter((sample) => sample.perfAt >= cutoff);
+  return freshSamples.length ? freshSamples : [currentFeatureSample(now)];
+}
+
+function renderChildEmotionCards(samples) {
+  renderChildSummaryList(els.childEmotionCards, summarizeChildEmotions(samples), "🙂", "Calm", 100);
+}
+
+function renderChildNeedCards(samples) {
+  renderChildSummaryList(els.childNeedCards, summarizeChildNeeds(samples), "👀", "Watching", 100);
+}
+
+function summarizeChildEmotions(samples) {
+  const total = Math.max(1, samples.length);
+  const buckets = new Map();
+  for (const sample of samples) {
+    const emotion = childEmotionForAffect(sample.interpretation?.affect?.primary);
+    addChildSummaryBucket(buckets, emotion.key, emotion.emoji, emotion.label, sample.interpretation?.affect?.confidence || 0);
+  }
+  return childSummaryItems(buckets, total);
+}
+
+function summarizeChildNeeds(samples) {
+  const total = Math.max(1, samples.length);
+  const buckets = new Map();
+  for (const sample of samples) {
+    const need = sample.interpretation?.needs?.[0] || null;
+    if (!need) continue;
+    addChildSummaryBucket(
+      buckets,
+      need.name,
+      CHILD_NEED_EMOJIS[need.name] || "",
+      titleCase(need.name),
+      need.confidence || 0
+    );
+  }
+  return childSummaryItems(buckets, total);
+}
+
+function childEmotionForAffect(primary) {
+  return CHILD_AFFECT_BY_ALIAS.get(primary) || CHILD_AFFECT_BY_KEY.get(primary) || CHILD_AFFECT_BY_KEY.get("neutral");
+}
+
+function addChildSummaryBucket(buckets, key, emoji, label, confidence) {
+  const bucket = buckets.get(key) || { key, emoji, label, count: 0, confidenceTotal: 0 };
+  bucket.count += 1;
+  bucket.confidenceTotal += confidence;
+  buckets.set(key, bucket);
+}
+
+function childSummaryItems(buckets, total) {
+  return [...buckets.values()]
+    .map((bucket) => ({
+      ...bucket,
+      percent: Math.round((bucket.count / total) * 100),
+      avgConfidence: bucket.count ? bucket.confidenceTotal / bucket.count : 0
+    }))
+    .sort((a, b) => b.count - a.count || b.avgConfidence - a.avgConfidence || a.label.localeCompare(b.label))
+    .slice(0, CHILD_SUMMARY_LIMIT);
+}
+
+function renderChildSummaryList(node, items, fallbackEmoji, fallbackLabel, fallbackPercent) {
+  node.innerHTML = "";
+  const rows = items.length ? items : [{ emoji: fallbackEmoji, label: fallbackLabel, percent: fallbackPercent }];
+  for (const [index, item] of rows.entries()) {
+    node.append(childSummaryRow(item, index === 0));
   }
 }
 
-function renderChildNeedCards(needs) {
-  const top = needs?.[0] || null;
-  els.childNeedCards.innerHTML = "";
-  for (const name of NEED_LABELS) {
-    const active = Boolean(top && top.name === name && top.confidence >= 0.22);
-    els.childNeedCards.append(childChip(CHILD_NEED_EMOJIS[name] || "", titleCase(name), active));
-  }
-}
+function childSummaryRow(item, active) {
+  const row = document.createElement("div");
+  row.className = "child-summary-row";
+  row.dataset.active = String(active);
+  row.style.setProperty("--share", `${Math.max(4, item.percent)}%`);
 
-function childChip(symbolText, labelText, active) {
-  const card = document.createElement("div");
-  card.className = "child-card";
-  card.dataset.active = String(active);
+  const fill = document.createElement("span");
+  fill.className = "child-summary-fill";
+  fill.setAttribute("aria-hidden", "true");
 
-  const symbol = document.createElement("div");
-  symbol.className = "child-card-symbol";
-  symbol.textContent = symbolText;
+  const label = document.createElement("span");
+  label.className = "child-summary-label";
 
-  const label = document.createElement("div");
-  label.className = "child-card-label";
-  label.textContent = labelText;
+  const emoji = document.createElement("span");
+  emoji.className = "child-summary-emoji";
+  emoji.textContent = item.emoji;
 
-  card.append(symbol, label);
-  return card;
+  const text = document.createElement("span");
+  text.textContent = item.label;
+  label.append(emoji, text);
+
+  const percent = document.createElement("span");
+  percent.className = "child-summary-percent";
+  percent.textContent = `${item.percent}%`;
+
+  row.append(fill, label, percent);
+  return row;
 }
 
 function renderDl(node, data) {
@@ -2448,6 +2536,14 @@ function bufferWindowSeconds() {
 
 function bufferWindowMs() {
   return bufferWindowSeconds() * 1000;
+}
+
+function childSummaryWindowSeconds() {
+  return clampInt(els.childSummarySecondsInput.value, 5, 60, 30);
+}
+
+function childSummaryWindowMs() {
+  return childSummaryWindowSeconds() * 1000;
 }
 
 function poseFromMatrix(matrixData) {

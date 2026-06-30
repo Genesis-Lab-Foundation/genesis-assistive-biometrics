@@ -4,18 +4,24 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Genesis Assistive Biometrics</title>
-    <link rel="stylesheet" href="./styles.css?v=20260630-mobile">
+    <link rel="stylesheet" href="./styles.css?v=20260630-summary-window">
   </head>
   <body>
     <main class="app">
       <section class="viewer" aria-label="Camera stream">
         <video id="video" autoplay muted playsinline></video>
         <canvas id="canvas"></canvas>
-        <div id="childOverlay" class="child-overlay" hidden aria-label="Child mode">
-          <div class="child-strip-stack">
-            <div id="childEmotionCards" class="child-strip child-emotion-cards" aria-label="Pure emotions"></div>
-            <div id="childNeedCards" class="child-strip child-need-cards" aria-label="Wants"></div>
-          </div>
+        <div id="childOverlay" class="child-overlay" hidden aria-label="Child mode summary">
+          <section class="child-summary" aria-label="Recent interpretation summary">
+            <div class="child-summary-group">
+              <h2>Emotions</h2>
+              <div id="childEmotionCards" class="child-summary-list child-emotion-cards" aria-label="Recent emotions"></div>
+            </div>
+            <div class="child-summary-group">
+              <h2>Wants</h2>
+              <div id="childNeedCards" class="child-summary-list child-need-cards" aria-label="Recent wants"></div>
+            </div>
+          </section>
         </div>
       </section>
 
@@ -154,6 +160,10 @@
                 Buffer seconds
                 <input id="bufferSecondsInput" type="number" min="10" max="120" step="5" value="45">
               </label>
+              <label>
+                Child summary seconds
+                <input id="childSummarySecondsInput" type="number" min="5" max="60" step="5" value="30">
+              </label>
               <div class="primary-actions">
                 <button id="exportLabelsButton" type="button">Export labels</button>
                 <button id="clearLabelsButton" type="button">Clear labels</button>
@@ -267,6 +277,6 @@
       </aside>
     </main>
 
-    <script type="module" src="./app.js?v=20260630-mobile"></script>
+    <script type="module" src="./app.js?v=20260630-summary-window"></script>
   </body>
 </html>
