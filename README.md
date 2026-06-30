@@ -6,7 +6,11 @@ The project explores whether browser-only camera, pose, hand, face, and audio te
 
 Live URL: https://genesis-assistive-biometrics-production.up.railway.app/
 
-Support us: https://t.me/genesis_lab_foundation
+Support:
+
+- Telegram channel: https://t.me/genesis_lab_foundation
+- Tribute subscription: https://web.tribute.tg/s/YyT
+- Direct support: https://web.tribute.tg/d/MdW
 
 ## Status
 

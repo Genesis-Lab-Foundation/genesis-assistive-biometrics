@@ -712,12 +712,20 @@ body.child-runtime .child-summary {
   color: var(--green);
 }
 
-.lab-feedback {
+.lab-feedback,
+.lab-support {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: 8px;
+}
+
+.lab-feedback {
   margin-top: -8px;
+}
+
+.lab-support {
+  margin-top: -10px;
 }
 
 .lab-feedback-link {
