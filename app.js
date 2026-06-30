@@ -2078,7 +2078,8 @@ function restoreSettings() {
   const openSections = canRestoreLayout ? saved.openSections || {} : {};
   for (const details of document.querySelectorAll("[data-persist-open]")) {
     const key = details.dataset.persistOpen;
-    details.open = typeof openSections[key] === "boolean" ? openSections[key] : false;
+    const defaultOpen = details.hasAttribute("open");
+    details.open = typeof openSections[key] === "boolean" ? openSections[key] : defaultOpen;
   }
 }
 

@@ -3,8 +3,9 @@ import { createReadStream, existsSync, statSync } from 'node:fs';
 import { createServer } from 'node:http';
 import { extname, join, normalize, resolve, sep } from 'node:path';
 
-const host = process.env.HOST || '127.0.0.1';
+const host = process.env.HOST || '0.0.0.0';
 const port = Number(process.env.PORT || 5174);
+const displayHost = host === '0.0.0.0' ? '127.0.0.1' : host;
 const root = process.cwd();
 const mimeTypes = {
   '.html': 'text/html; charset=utf-8',
@@ -37,7 +38,7 @@ const server = createServer((request, response) => {
 });
 
 server.listen(port, host, () => {
-  console.log(`Genesis Assistive Biometrics: http://${host}:${port}`);
+  console.log(`Genesis Assistive Biometrics: http://${displayHost}:${port}`);
 });
 
 function safeFilePath(pathname) {

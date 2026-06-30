@@ -5,7 +5,7 @@ export const POSE_MODEL_URL = "https://storage.googleapis.com/mediapipe-models/p
 
 export const STORAGE_KEY = "camera-control-app:settings:v1";
 export const LABELS_STORAGE_KEY = "camera-control-app:labels:v1";
-export const SETTINGS_VERSION = 4;
+export const SETTINGS_VERSION = 5;
 
 export const FACE_DETECT_INTERVAL_MS = 40;
 export const FACE_HOLD_MS = 1600;
