@@ -8,6 +8,9 @@ My name is [Your Name], and I am working with Genesis Lab Foundation on a charit
 
 The project explores whether local browser-based telemetry from camera and microphone signals can help caregivers better understand nonverbal or minimally verbal children. The first prototype combines face landmarks, hand and body pose, nonverbal audio features, time context, and caregiver labels to generate transparent hypotheses such as basic affect states and AAC-style wants like drink, eat, toilet, help, more, stop, yes, and no. We are also interested in adding explicitly consented wearable signals from Apple Watch or other smart watches/bands, such as heart rate, HRV, movement/activity, and sleep/rest context, as an optional multimodal layer.
 
+Live prototype: https://genesis-assistive-biometrics-production.up.railway.app/
+Repository: https://github.com/Genesis-Lab-Foundation/genesis-assistive-biometrics
+
 Important context:
 
 - This is a research prototype, not a medical device.
@@ -28,9 +31,9 @@ We are looking for researchers, clinicians, or labs who can review the approach 
 - optional wearable physiology signals and their ethical limits,
 - whether the prototype is worth testing in a controlled setting.
 
-The code is being prepared as an open-source project by Genesis Lab Foundation. I would be grateful for a short call, written feedback, or a referral to someone in your institution who works on AAC, autism, assistive technology, affective computing, human-computer interaction, or child-centered clinical research.
+The code is open-source under Genesis Lab Foundation. I would be grateful for a short call, written feedback, or a referral to someone in your institution who works on AAC, autism, assistive technology, affective computing, human-computer interaction, or child-centered clinical research.
 
-If useful, I can share the repository, a short demo video, and the current ethics/safety notes.
+If useful, I can also share a short demo video and the current ethics/safety notes.
 
 Thank you for your time,
 
@@ -38,4 +41,4 @@ Thank you for your time,
 Genesis Lab Foundation  
 [Email]  
 [Telegram / Signal / Phone]  
-[Repository link]
+https://github.com/Genesis-Lab-Foundation/genesis-assistive-biometrics
