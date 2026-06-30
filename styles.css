@@ -712,6 +712,34 @@ body.child-runtime .child-summary {
   color: var(--green);
 }
 
+.lab-feedback {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: -8px;
+}
+
+.lab-feedback-link {
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 14px;
+  font-size: 11px;
+}
+
+.lab-feedback-primary {
+  border-color: rgb(103 232 249 / 42%);
+  background: rgb(103 232 249 / 9%);
+}
+
+.lab-support-link {
+  border-color: rgb(250 204 21 / 42%);
+  background: rgb(250 204 21 / 9%);
+  color: var(--yellow);
+}
+
 .lab-head p,
 .lab-section p {
   max-width: 780px;

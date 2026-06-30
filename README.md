@@ -6,6 +6,8 @@ The project explores whether browser-only camera, pose, hand, face, and audio te
 
 Live URL: https://genesis-assistive-biometrics-production.up.railway.app/
 
+Support us: https://t.me/genesis_lab_foundation
+
 ## Status
 
 Research prototype. Not a medical device. Not diagnostic software. Not a replacement for clinical evaluation, caregiver judgment, or emergency care.
