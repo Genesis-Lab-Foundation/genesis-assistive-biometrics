@@ -4,6 +4,8 @@ Charitable local-first assistive technology prototype by Genesis Lab Foundation.
 
 The project explores whether browser-only camera, pose, hand, face, and audio telemetry can help caregivers understand nonverbal or minimally verbal children. The first target scenario is an AAC-style interface: the child sees a calm cat-mask experience and emoji cards, while the caregiver can inspect raw telemetry, evidence, and labels.
 
+Live URL: https://genesis-assistive-biometrics-production.up.railway.app/
+
 ## Status
 
 Research prototype. Not a medical device. Not diagnostic software. Not a replacement for clinical evaluation, caregiver judgment, or emergency care.
